@@ -1,0 +1,15 @@
+1. Azure Integration:
+If you're setting up a secure API gateway to connect multiple identity data sources, Azure API Management (APIM) with Azure Active Directory (AAD) is a solid choice for authentication. APIM helps manage things like rate limiting, caching, and request/response transformation, while AAD takes care of OAuth2/OpenID Connect authentication. For added security, store secrets and certificates in Azure Key Vault, and use Azure Private Link to keep network connectivity between services private.
+
+2. Data Access:
+When working with large identity data sets, optimizing SQL queries is key. Smart indexing and query optimization techniques can make a huge difference. One useful trick is creating a filtered index on the IsActive column to speed up searches for active users:
+
+CREATE NONCLUSTERED INDEX IX_UserIdentities_Active ON UserIdentities(UserId) WHERE IsActive = 1;
+
+To further improve performance, consider pagination with OFFSET-FETCH and use Azure Redis Cache to store frequently accessed query results.
+
+3. Security:
+Handling Personally Identifiable Information (PII) requires a strong security strategy. Use TLS 1.3 for encrypting data in transit and manage encryption keys with Azure Key Vault. For data at rest, Azure SQL Database’s Transparent Data Encryption (TDE) helps keep things secure, and column-level encryption adds another layer of protection for sensitive fields. On the Angular frontend, stick to HTTP-only cookies for session management, sanitize user input properly, and only store sensitive data in memory when necessary—then wipe it immediately after use.
+
+4. DevOps:
+If you're setting up CI/CD workflows in Azure, it's best to keep frontend and backend deployments separate. For the Angular frontend, build a pipeline that runs unit tests, packages the app, and deploys it to Azure Static Web Apps. On the .NET Core backend, set up another pipeline that handles testing, building, and deploying to Azure App Service. Use Azure Key Vault for managing secrets, and ensure a smooth infrastructure setup using Azure Resource Manager (ARM) templates or Terraform for consistent deployments.
